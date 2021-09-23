@@ -1,21 +1,36 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Load libs-----------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 library(haven)
 library(tidyverse)
 library(survey)
 library(magrittr)
-NSCG_2019_raw <- read_rds("Data/NSCG_2019_raw.rds")
+library(here)
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Load data-----------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NSCG_2019_raw <- read_rds(here("Data/NSCG_2019_raw.rds"))
 
 NSCG_2019_clean <- NSCG_2019_raw %>% 
   dplyr::select(JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, AGE, CTZUSIN, 
                 CHLVIN, MARSTA, SPOWK, RESPLOC, HCAPIN, DGRDG, HDCARN, 
-                HDPBPR, NDGRMED, UGLOANR, JOBINS, JOBPENS, JOBPROFT, 
+                HDPBPR, N2DGRMED, UGLOANR, JOBINS, JOBPENS, JOBPROFT, 
                 JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
                 FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                FACSEC, FACSOC, EMSIZE, NEDTP, LFSTAT, NRREA, NBAMED,
-                NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR, COMCOLI, 
+                FACSEC, FACSOC, EMSIZE, NEDTP, LFSTAT, NRREA, N2BAMED,
+                N2BANED, N3OCPR, WTSURVY, HISPCAT, BAYR, REFYR, COMCOLI, 
                 DIFHEAR, DIFLIFT, DIFSEE, DIFWALK,
                 EDDAD, EDMOM, HSYR, LFSTAT, SATADV,
                 SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
                 SATSEC, SATSOC, WAPRI, EMSMI)
+
+#From 2017 to 2019 the following vars changed names
+# NDGRMED->N2DGRMED = field of highest degree
+# NBAMED->N2BAMED = field of bachelors degre
+# NBANED->N2BANED = field of second degree of minor
+# N2OCPR->N3OCPR = principal job
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Majors by Job -----------------------------------------------------------

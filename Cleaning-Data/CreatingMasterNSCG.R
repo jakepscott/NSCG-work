@@ -8,11 +8,11 @@ library(sjlabelled)
 library(labelled)
 library(lubridate)
 
-NSCG_2003_clean <- read_rds("../Data/NSCG_2003_clean.rds")
-NSCG_2010_clean <- read_rds("../Data/NSCG_2010_clean.rds")
-NSCG_2013_clean <- read_rds("../Data/NSCG_2013_clean.rds")
-NSCG_2015_clean <- read_rds("../Data/NSCG_2015_clean.rds")
-NSCG_2017_clean <- read_rds("../Data/NSCG_2017_clean.rds")
+NSCG_2003_clean <- read_rds(here("NSCG_Data/NSCG_2003_clean.rds"))
+NSCG_2010_clean <- read_rds(here("NSCG_Data/NSCG_2010_clean.rds"))
+NSCG_2013_clean <- read_rds(here("NSCG_Data/NSCG_2013_clean.rds"))
+NSCG_2015_clean <- read_rds(here("NSCG_Data/NSCG_2015_clean.rds"))
+NSCG_2017_clean <- read_rds(here("NSCG_Data/NSCG_2017_clean.rds"))
 
 
 ###Making Master Data Set of all NSCG's from 2003 through 2017. NOTE: UGLOANR and undergrad_debt are NA for 2010
@@ -395,7 +395,7 @@ NSCG_Master <- NSCG_Master %>% dplyr::select(-NBAMED, -NBANED, - NDGRMED,-(JOBSA
 ##Adding unemployment at time of grad
 ###########################################################
 unemployment <- 
-  read_csv("../Data/UNRATE.csv")
+  read_csv(here("NSCG_Data/UNRATE.csv"))
 
 unemployment <- unemployment %>% mutate(Month=month(DATE),
                                         Grad_Year_BA=year(DATE)) %>% filter(Month==5)
@@ -403,7 +403,7 @@ unemployment <- unemployment %>% mutate(Month=month(DATE),
 NSCG_Master <- left_join(NSCG_Master, unemployment, by="Grad_Year_BA")
 
 #Creating recession indicator
-recession_indicator <- read_csv("../Data/USRECM.csv")
+recession_indicator <- read_csv(here("NSCG_Data/USRECM.csv"))
 rec_yearly <- recession_indicator %>% 
   mutate(Grad_Year_BA=year(DATE)) %>% 
   group_by(Grad_Year_BA) %>% 
@@ -416,5 +416,5 @@ NSCG_Master <- left_join(NSCG_Master,rec_yearly,by="Grad_Year_BA")
 #############################################################
 ##SAVING DATASET
 ############################################################
-saveRDS(NSCG_Master, file = "../Data/NSCG_Master.rds")
+saveRDS(NSCG_Master, file = here("NSCG_Data/NSCG_Master.rds"))
 

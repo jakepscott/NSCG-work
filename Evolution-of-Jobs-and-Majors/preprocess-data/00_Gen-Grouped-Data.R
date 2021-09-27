@@ -26,7 +26,8 @@ Job_Labels <- read_csv(here("NSCG_Data/Job-Labels.csv")) %>%
 full_data <- data %>% 
   left_join(Major_Labels) %>% 
   left_join(Job_Labels) %>% 
-  select(Major, Principal_Job, Major_Label, Job_Label, Survey_Year, Survey_Weight)
+  select(Major, Principal_Job, Major_Label, Job_Label, Survey_Year, Survey_Weight) %>% 
+  na.omit()
 
 # Get top jobs by major ---------------------------------------------------
 # Group by survey year and major, and see what jobs are most common for each  

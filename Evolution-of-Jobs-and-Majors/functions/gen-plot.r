@@ -2,7 +2,7 @@ gen_plot <- function(group_by,
                      filter,
                      num_lines = 5, 
                      data){
-  windowsFonts(`Roboto Condensed`=windowsFont("Roboto Condensed"))
+  #windowsFonts(`Roboto Condensed`=windowsFont("Roboto Condensed"))
   if (group_by == "Major") {
     
     #Find the top num_lines jobs for the given major over

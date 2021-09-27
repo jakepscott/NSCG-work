@@ -4,15 +4,15 @@ load_data <- function(){
   data <- list()
   
   #List top jobs by major and top majors by job
-  Jobs_by_Major <- read_csv(here("Evolution-of-Jobs-and-Majors/Data/Jobs-by-Major-and-Year.csv")) %>% 
+  Jobs_by_Major <- read_csv(("data/Jobs-by-Major-and-Year.csv")) %>% 
     mutate(data = "Jobs_by_Major")
   
-  Majors_by_Job <- read_csv(here("Evolution-of-Jobs-and-Majors/Data/Majors-by-Job-and-Year.csv")) %>% 
+  Majors_by_Job <- read_csv(("data/Majors-by-Job-and-Year.csv")) %>% 
     mutate(data = "Majors_by_Job")
   
   #Load the codes and labels for jobs and majors
-  data$Job_key <- read_csv(here("NSCG_Data/Job-Labels.csv"))
-  data$Major_key <- read_csv(here("NSCG_Data/Major-Labels.csv"))
+  data$Job_key <- read_csv(("data/Job-Labels.csv"))
+  data$Major_key <- read_csv(("data/Major-Labels.csv"))
   
   #Join major and job labels to the data
   data$Jobs_by_Major <- Jobs_by_Major %>% 

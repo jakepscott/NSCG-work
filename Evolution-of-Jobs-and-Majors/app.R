@@ -1,6 +1,10 @@
-# Load Libs and source functions ------------------------------------------
+# Set filepath (since here doesn't place well with Shiny deploymen --------
 library(here)
-source(here("Evolution-of-Jobs-and-Majors/functions/load-libs-and-functions.R"))
+deployed <- T
+
+
+# Load Libs and source functions ------------------------------------------
+source("functions/load-libs-and-functions.R")
 
 # Load Data ---------------------------------------------------------------
 raw_data <- load_data()

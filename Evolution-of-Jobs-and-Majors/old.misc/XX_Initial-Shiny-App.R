@@ -2,6 +2,7 @@ library(shiny)
 library(here)
 library(tidyverse)
 library(ggiraph)
+library(grDevices)
 
 data <- read_csv(here("Data/Jobs-by-Major-and-Year.csv"))
 

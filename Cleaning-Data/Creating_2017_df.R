@@ -2,7 +2,7 @@ library(haven)
 library(tidyverse)
 library(survey)
 library(magrittr)
-NSCG_2017_raw <- read_rds("Data/NSCG_2017_raw.rds")
+NSCG_2017_raw <- read_rds("NSCG_Data/NSCG_2017_raw.rds")
 
 NSCG_2017_clean <- NSCG_2017_raw %>% dplyr::select(JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, HCAPIN, DGRDG, HDCARN, 
                                                    HDPBPR, NDGRMED, UGLOANR, JOBINS, JOBPENS, JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,

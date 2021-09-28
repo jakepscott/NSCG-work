@@ -11,7 +11,7 @@ library(here)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Load data-----------------------------------------------------------
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NSCG_2019_raw <- read_rds(here("Data/NSCG_2019_raw.rds"))
+NSCG_2019_raw <- read_rds(here("NSCG_Data/NSCG_2019_raw.rds"))
 
 NSCG_2019_clean <- NSCG_2019_raw %>% 
   dplyr::select(JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, AGE, CTZUSIN, 
@@ -38,15 +38,15 @@ NSCG_2019_clean <- NSCG_2019_raw %>%
 #so looking at what Fields of Study are common for given occupations
 
 majors_by_job <-  NSCG_2019_clean %>%  
-  dplyr::select(N2OCPR, NDGRMED, WTSURVY) %>% 
-  group_by(N2OCPR) %>% 
+  dplyr::select(N3OCPR, N2DGRMED, WTSURVY) %>% 
+  group_by(N3OCPR) %>% 
   nest()
 
 
 jobs_by_major <-  NSCG_2019_clean %>% 
-  filter(N2OCPR!=999989) %>%  
-  dplyr::select(N2OCPR, NDGRMED, WTSURVY) %>% 
-  group_by(NDGRMED) %>% 
+  filter(N3OCPR!=999989) %>%  
+  dplyr::select(N3OCPR, N2DGRMED, WTSURVY) %>% 
+  group_by(N2DGRMED) %>% 
   nest()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,8 +59,8 @@ design_func <- function(df) {
 }
 
 ##Just making a "design" column, so that each job's mini_dataframe (in the data column) 
-##is next to the design object for it. This will allow us to use weights when we work with them. So the cell for N2OCPR==1 and 
-## column = design is the weights for the N2OCPRs==1 minidataframe. 
+##is next to the design object for it. This will allow us to use weights when we work with them. So the cell for N3OCPR==1 and 
+## column = design is the weights for the N3OCPRs==1 minidataframe. 
 majors_by_job <- majors_by_job %>% 
   mutate(design = map(data, design_func))
 
@@ -81,17 +81,17 @@ jobs_by_major <- jobs_by_major %>%
 ##the percent of people that are each major. Finally, we use this list of majors to create a new column of mini dataframes of the the top 5 most common majors for each job
 
 ### PIPED VERSION
-### Just cleaned the first line to work with pipes so I could read it and added some comments @Caio
-for (i in seq_along(majors_by_job$N2OCPR)) {
+### Just cleaned the first line to work with pipes so I could read it and added some comments
+for (i in seq_along(majors_by_job$N3OCPR)) {
   ## create survey table for this job cat
-  majors_by_job$majors_tables[[i]] <- svytable(~majors_by_job$data[[i]]$NDGRMED, 
+  majors_by_job$majors_tables[[i]] <- svytable(~majors_by_job$data[[i]]$N2DGRMED, 
                                                design = majors_by_job$design[[i]]) %>%
     prop.table() %>%
     as.data.frame() %>%
     as_tibble()
   ## dplyr::rename column in nested survey table
   majors_by_job$majors_tables[[i]] <- dplyr::rename(majors_by_job$majors_tables[[i]], 
-                                                    major = majors_by_job.data..i...NDGRMED)
+                                                    major = majors_by_job.data..i...N2DGRMED)
   ## add percentage column to  survey table 
   majors_by_job$majors_tables[[i]]$percentage <- majors_by_job$majors_tables[[i]]$Freq*100
   ## sort survey table by percent
@@ -117,9 +117,9 @@ for (i in seq_along(majors_by_job$N2OCPR)) {
 majors_by_job <- majors_by_job %>% 
   dplyr::select(-data,-design,-majors_tables)
 
-##Arranging so N2OCPR==0 is at top
+##Arranging so N3OCPR==0 is at top
 majors_by_job<- majors_by_job %>% 
-  arrange(N2OCPR)
+  arrange(N3OCPR)
 
 
 ###**************************************************Now turning to making the mismatch variable**************************************************
@@ -135,7 +135,7 @@ design <- svydesign(~0, data = NSCG_2019_clean, weights = NSCG_2019_clean$WTSURV
 ## geologist, there will be a top_5 column, which would be the top 5 majors for geologists in that given row
 NSCG_2019_clean <- left_join(NSCG_2019_clean, 
                              majors_by_job, 
-                             by = "N2OCPR") ##THIS IS THE KEY
+                             by = "N3OCPR") ##THIS IS THE KEY
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Create mismatch variable itself -----------------------------------------
@@ -143,16 +143,16 @@ NSCG_2019_clean <- left_join(NSCG_2019_clean,
 ##Looks at each row of NSCG, and sets the value of the ith row of the new objmatch column to 1 or 0 based on the following. It first goes to the ith column of NSCG and sees the value of
 ## NDGMEN. It then goes to that same ith row of NSCG and looks at the top_75_p column. This is a list of lists, so each element of top_75_p is a list with 1 element, a tibble. We want the 
 ##tibble, so we put the double brackets. So now we have the tibble in the ith row of the top_75_p column. Now we grab the list of majors in that tibble. This represents the top 75% majors
-##for the job of the person in that ith row. If the value of NDGRMED in the ith column is in the list of the top_75_p majors, set the value of objmatch to 1. Otherwise, set it to 0. 
+##for the job of the person in that ith row. If the value of N2DGRMED in the ith column is in the list of the top_75_p majors, set the value of objmatch to 1. Otherwise, set it to 0. 
 library("progress")
 pb <- progress_bar$new(format = "[:bar] :current/:total (:percent)", 
                        total = nrow(NSCG_2019_clean))
 for (i in 1:nrow(NSCG_2019_clean)) {
   pb$tick()
-  NSCG_2019_clean$Obj_Mismatch[i] <- NSCG_2019_clean[i,]$NDGRMED %in% NSCG_2019_clean[i,]$top_75_p[[1]]$major ##need to do this because the ith row of top_5 major is a list with 
+  NSCG_2019_clean$Obj_Mismatch[i] <- NSCG_2019_clean[i,]$N2DGRMED %in% NSCG_2019_clean[i,]$top_75_p[[1]]$major ##need to do this because the ith row of top_5 major is a list with 
   ##one element, the tibble. RUn this code to see this: class(NSCG_2019_clean[3,]$top_5). So we need to tell r, look at the ith row of the top_5 column,  which will be 
   ##a list, then take the first element of this list, which is a tibble, then look at the major column. 
-  NSCG_2019_clean$Obj_Mismatch_Inclusive[i] <- NSCG_2019_clean[i,]$NDGRMED %in% NSCG_2019_clean[i,]$top_75_p_inclusive[[1]]$major
+  NSCG_2019_clean$Obj_Mismatch_Inclusive[i] <- NSCG_2019_clean[i,]$N2DGRMED %in% NSCG_2019_clean[i,]$top_75_p_inclusive[[1]]$major
 }
 
 
@@ -175,24 +175,24 @@ NSCG_2019_clean <- NSCG_2019_clean %>%
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # so looking at what jobs are common are given fields of study
 
-jobs_by_major <-  NSCG_2019_clean %>% filter(N2OCPR!=999989) %>%
-  dplyr::select(N2OCPR, NDGRMED, WTSURVY) %>% 
-  group_by(NDGRMED) %>% 
+jobs_by_major <-  NSCG_2019_clean %>% filter(N3OCPR!=999989) %>%
+  dplyr::select(N3OCPR, N2DGRMED, WTSURVY) %>% 
+  group_by(N2DGRMED) %>% 
   nest()
 
 jobs_by_major <- jobs_by_major %>% 
   mutate(design = map(data, design_func))
 
-for (i in seq_along(jobs_by_major$NDGRMED)) {
+for (i in seq_along(jobs_by_major$N2DGRMED)) {
   ## create survey table for this job cat
-  jobs_by_major$jobs_tables[[i]] <- svytable(~jobs_by_major$data[[i]]$N2OCPR, 
+  jobs_by_major$jobs_tables[[i]] <- svytable(~jobs_by_major$data[[i]]$N3OCPR, 
                                              design = jobs_by_major$design[[i]]) %>%
     prop.table() %>%
     as.data.frame() %>%
     as_tibble()
   ## dplyr::rename column in nested survey table
   jobs_by_major$jobs_tables[[i]] <- dplyr::rename(jobs_by_major$jobs_tables[[i]], 
-                                                  job = jobs_by_major.data..i...N2OCPR)
+                                                  job = jobs_by_major.data..i...N3OCPR)
   ## add percentage column to  survey table 
   jobs_by_major$jobs_tables[[i]]$percentage <- jobs_by_major$jobs_tables[[i]]$Freq*100
   ## sort survey table by percent
@@ -222,7 +222,7 @@ jobs_by_major <- jobs_by_major %>%
 ##KEY, use the merge! So I have jobs_by_major, which has a jobcus column and a top 75 percnt column. The top 75 percnt column contains the top 5 majors for 
 ##the given job. I can use a merge so that I bring this top 75 percnt column to the NSCG data, using jobcus. So each row in NSCG where jobcus ==
 ## geologist, there will be a top 75 percnt column, which would be the top 5 majors for geologists in that given row
-NSCG_2019_clean <- left_join(NSCG_2019_clean, jobs_by_major, by = "NDGRMED") ##THIS IS THE KEY
+NSCG_2019_clean <- left_join(NSCG_2019_clean, jobs_by_major, by = "N2DGRMED") ##THIS IS THE KEY
 
 NSCG_2019_clean <- NSCG_2019_clean %>% 
   as.tibble()
@@ -234,16 +234,16 @@ NSCG_2019_clean <- NSCG_2019_clean %>%
 ##Looks at each row of NSCG, and sets the value of the ith row of the new objmatch column to 1 or 0 based on the following. It first goes to the ith column of NSCG and sees the value of
 ## NDGMEN. It then goes to that same ith row of NSCG and looks at the top 75 percnt column. This is a list of lists, so each element of top 75 percnt is a list with 1 element, a tibble. We want the 
 ##tibble, so we put the double brackets. So now we have the tibble in the ith row of the top 75 percnt column. Now we grab the list of majors in that tibble. This represents the top 5 majors
-##for the job of the person in that ith row. If the value of NDGRMED in the ith column is in the list of the top 5 majors, set the value of objmatch to 1. Otherwise, set it to 0. 
+##for the job of the person in that ith row. If the value of N2DGRMED in the ith column is in the list of the top 5 majors, set the value of objmatch to 1. Otherwise, set it to 0. 
 
 library("progress")
 pb <- progress_bar$new(format = "[:bar] :current/:total (:percent)", total = nrow(NSCG_2019_clean))
 for (i in 1:nrow(NSCG_2019_clean)) {
   pb$tick()
-  NSCG_2019_clean$Obj_Mismatch_Reversed[i] <- NSCG_2019_clean[i,]$N2OCPR %in% NSCG_2019_clean[i,]$top_75_p[[1]]$job ##need to do this because the ith row of top 75 percnt major is a list with 
+  NSCG_2019_clean$Obj_Mismatch_Reversed[i] <- NSCG_2019_clean[i,]$N3OCPR %in% NSCG_2019_clean[i,]$top_75_p[[1]]$job ##need to do this because the ith row of top 75 percnt major is a list with 
   ##one element, the tibble. RUn this code to see this: class(NSCG_2019_clean[3,]$top 75 percnt). So we need to tell r, look at the ith row of the top 75 percnt column,  which will be 
   ##a list, then take the first element of this list, which is a tibble, then look at the major column. 
-  NSCG_2019_clean$Obj_Mismatch_Reversed_Inclusive[i] <- NSCG_2019_clean[i,]$N2OCPR %in% NSCG_2019_clean[i,]$top_75_p_inclusive[[1]]$job
+  NSCG_2019_clean$Obj_Mismatch_Reversed_Inclusive[i] <- NSCG_2019_clean[i,]$N3OCPR %in% NSCG_2019_clean[i,]$top_75_p_inclusive[[1]]$job
 }
 
 

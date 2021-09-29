@@ -60,24 +60,3 @@ mismatch_function <- function(data,
   
   return(output)
 }
-
-# library(haven)
-# library(here)
-# library(tidyverse)
-# library(survey)
-# library(magrittr)
-# NSCG_2017_M2 <- read_rds(here("NSCG_Data/NSCG_2017_raw.rds")) %>% 
-#   as_tibble() %>% 
-#   dplyr::select("Job"=N2OCPR, "Major"=NDGRMED, WTSURVY)   
-
-
-data <- mismatch_function(NSCG_2017_M2,
-                  grouping_variable = Job,
-                  counting_variable = Major,
-                  cutoff = 75, 
-                  weight = WTSURVY)
-
-
-data %>% 
-  count(match, wt = WTSURVY) %>% 
-  mutate(percent = n/sum(n))

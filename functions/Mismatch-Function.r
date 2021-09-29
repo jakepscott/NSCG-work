@@ -3,14 +3,15 @@ mismatch_function <- function(data,
                               counting_variable,
                               cutoff,
                               weight,
-                              inclusive=F){
+                              inclusive=F,
+                              keep_nests=F){
 
 # Nest based on grouping variable -----------------------------------------
   nested <- data %>%
     group_by({{grouping_variable}}) %>% 
-    nest()
+    nest() %>% 
+    rename("nested_data" = data)
   
-
 # Make function to count most common instances of counting_variable -------
   count_function <- function(data, variable_to_count, weight = WTSURVY){
     data %>% 
@@ -21,9 +22,12 @@ mismatch_function <- function(data,
   
   #Count top instances of counting_variable by grouping_variable
   nested <- nested %>% 
-    mutate(count_table = map(data, count_function, variable_to_count = {{counting_variable}}))
+    mutate(count_table = map(nested_data, count_function, variable_to_count = {{counting_variable}}))
   
-
+  if(!keep_nests){
+    nested <- nested %>% select(-nested_data)
+  }
+  
 # Grab top cutoff worth of counting_variable by grouping_variable ---------
   top_function <- function(data, variable_to_select, cutoff = 75){
     data %>% 
@@ -39,16 +43,12 @@ mismatch_function <- function(data,
   nested <- nested %>% 
     mutate(top = map(count_table, top_function, {{counting_variable}}, {{cutoff}}))
   
-
-# Make function that checks whether given count_var is on of most  --------
-  check_function <- function(top_majors_or_jobs, major_or_job, variable){
-    tops <- top_majors_or_jobs %>% 
-      pull({{variable}}) %>% 
-      as.vector()
-    
-    major_or_job %in% tops
+  if(!keep_nests){
+    nested <- nested %>% select(-count_table)
   }
   
+
+# Check whether counting variable is in top most common -------------------
   output <- data %>%
     as_tibble() %>%
     #filter(Job != 999989) %>% 
@@ -57,6 +57,10 @@ mismatch_function <- function(data,
     rowwise() %>% 
     mutate(match = ifelse({{counting_variable}} %in% (top %>% pull({{counting_variable}})), "Match", "Mismatch")) %>% 
     ungroup()
+  
+  if(!keep_nests){
+    output <- output %>% select(-top)
+  }
   
   return(output)
 }

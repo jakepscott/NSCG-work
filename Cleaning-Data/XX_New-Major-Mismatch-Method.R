@@ -11,6 +11,7 @@ NSCG_2017_M2 <- read_rds(here("NSCG_Data/NSCG_2017_raw.rds")) %>%
 ##Majors by Job- so looking at what Fields of Study are common for given occupations
 ###****************************************************************************************************
 
+tictoc::tic()
 majors_by_job_M2_raw <-  NSCG_2017_M2 %>%
   as_tibble() %>% 
   group_by(Job) %>% 
@@ -51,14 +52,16 @@ check_function <- function(top_majors_or_jobs, major_or_job, variable){
 match_M2 <- NSCG_2017_M2 %>%
   #head(10) %>% 
   as_tibble() %>%
-  filter(Job != 999989) %>% 
+  #filter(Job != 999989) %>% 
   mutate(Job = as.numeric(Job)) %>% 
   left_join(majors_by_job_M2) %>% 
   rowwise() %>% 
   mutate(match = ifelse(Major %in% top_majors$Major, "Match", "Mismatch")) %>% 
   ungroup()
+tictoc::toc()
 
+# 
 # match_M2 %>%
 #   count(match, wt = WTSURVY) %>%
 #   mutate(percent = n/sum(n)*100)
-
+# 

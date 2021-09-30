@@ -1,61 +1,177 @@
-library(haven)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Load Libs ---------------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 library(tidyverse)
-library(survey)
-library(magrittr)
-library(readr)
-library(plyr)
-library(sjlabelled)
-library(labelled)
-library(lubridate)
+library(here)
+library(vroom)
 
-NSCG_2003_clean <- read_rds(here("NSCG_Data/NSCG_2003_clean.rds"))
-NSCG_2010_clean <- read_rds(here("NSCG_Data/NSCG_2010_clean.rds"))
-NSCG_2013_clean <- read_rds(here("NSCG_Data/NSCG_2013_clean.rds"))
-NSCG_2015_clean <- read_rds(here("NSCG_Data/NSCG_2015_clean.rds"))
-NSCG_2017_clean <- read_rds(here("NSCG_Data/NSCG_2017_clean.rds"))
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Load Data ---------------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NSCG_2003_raw <- vroom(here("NSCG_Data/NSCG_2003_raw.csv"),
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, 
+                                      GENDER, AGE, CTZUSIN, CHLVIN, MARSTA, 
+                                      SPOWK, RESPLOC, HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, NDGRMED, 
+                                      SALARY, HRSWK, 
+                                      SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, 
+                                      FACSAL, FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
+                                      NBANED, NOCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=NOCPR, 
+         "Major"=NDGRMED)
+
+NSCG_2010_raw <- vroom(here("NSCG_Data/NSCG_2010_raw.csv"), 
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER,
+                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
+                                      HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
+                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
+                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
+                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=N2OCPR, 
+         "Major"=NDGRMED)
+
+NSCG_2013_raw <- vroom(here("NSCG_Data/NSCG_2013_raw.csv"), 
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
+                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
+                                      HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
+                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
+                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
+                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=N2OCPR, 
+         "Major"=NDGRMED)
+
+NSCG_2015_raw <- vroom(here("NSCG_Data/NSCG_2015_raw.csv"), 
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
+                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
+                                      HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
+                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
+                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
+                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=N2OCPR, 
+         "Major"=NDGRMED)
+
+NSCG_2017_raw <- vroom(here("NSCG_Data/NSCG_2017_raw.csv"), 
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
+                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
+                                      HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
+                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
+                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
+                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=N2OCPR, 
+         "Major"=NDGRMED)
+
+NSCG_2019_raw <- vroom(here("NSCG_Data/NSCG_2019_raw.csv"), 
+                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
+                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
+                                      HCAPIN, DGRDG, HDCARN, 
+                                      HDPBPR, N2DGRMED, JOBINS, JOBPENS, 
+                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
+                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
+                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, N2BAMED,
+                                      N2BANED, N3OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
+                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
+                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
+                                      SATSEC, SATSOC, EMSMI)) %>%
+  rename("Job"=N3OCPR, 
+         "Major"=N2DGRMED)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Join in Match Data ------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Load Data
+NSCG_2003_match <- vroom(here("NSCG_Data/Match_2003.csv"))
+NSCG_2010_match <- vroom(here("NSCG_Data/Match_2010.csv"))
+NSCG_2013_match <- vroom(here("NSCG_Data/Match_2013.csv"))
+NSCG_2015_match <- vroom(here("NSCG_Data/Match_2015.csv"))
+NSCG_2017_match <- vroom(here("NSCG_Data/Match_2017.csv"))
+NSCG_2019_match <- vroom(here("NSCG_Data/Match_2019.csv"))
 
 
-###Making Master Data Set of all NSCG's from 2003 through 2017. NOTE: UGLOANR and undergrad_debt are NA for 2010
-NSCG_Master_Raw <- rbind.fill(NSCG_2003_clean, NSCG_2010_clean, NSCG_2013_clean, NSCG_2015_clean, NSCG_2017_clean)
+# Join data ( changesalso make a couple of)
+NSCG_2003_clean <- NSCG_2003_raw %>% 
+  left_join(NSCG_2003_match) %>% 
+  mutate_all(as.character)
 
-NSCG_Master_Raw<- NSCG_Master_Raw %>% dplyr::select(JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, HCAPIN, DGRDG, HDCARN, 
-                                                    HDPBPR, NDGRMED, Undergrad_Debt, JOBINS, JOBPENS, JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                                    FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                                    NBANED, NOCPR, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                                    COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                                    SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                                    SATSEC, SATSOC, EMSMI,
-                                                    Obj_Mismatch, Obj_Mismatch_Inclusive,
-                                                    Obj_Mismatch_Reversed, Obj_Mismatch_Reversed_Inclusive)
+NSCG_2010_clean <- NSCG_2010_raw %>% 
+  left_join(NSCG_2010_match) %>% 
+  mutate_all(as.character)
 
-##Removing labels and attributes, which just cleans the data and makes it easier to use
-NSCG_Master_Raw <- remove_all_labels(NSCG_Master_Raw)
-NSCG_Master_Raw <- remove_attributes(NSCG_Master_Raw, "format.sas")
+NSCG_2013_clean <- NSCG_2013_raw %>% 
+  left_join(NSCG_2013_match) %>% 
+  mutate_all(as.character)
 
-##Above cleaning turns it into a dataframe, this gets it back as a tibble
-NSCG_Master_Raw <- as_tibble(NSCG_Master_Raw)
+NSCG_2015_clean <- NSCG_2015_raw %>% 
+  left_join(NSCG_2015_match) %>% 
+  mutate_all(as.character)
 
-##Dropping the dataframes I don't need 
-rm(NSCG_2003_clean,NSCG_2010_clean,NSCG_2013_clean,NSCG_2015_clean,NSCG_2017_clean)
+NSCG_2017_clean <- NSCG_2017_raw %>% 
+  left_join(NSCG_2017_match) %>% 
+  mutate_all(as.character)
 
-#Saving this version for safekeeping
-#setwd("C:/Users/Jake Scott/Dropbox/Jake Scott/Honors Thesis- Cohort Analysis/R")
-#saveRDS(NSCG_Master_Raw, "NSCG_Master_Raw.rds")
+NSCG_2019_clean <- NSCG_2019_raw %>% 
+  left_join(NSCG_2019_match) %>% 
+  mutate_all(as.character)
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Bind NSCG Data ------------------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NSCG_Master_Raw <- NSCG_2003_clean %>%
+  bind_rows(NSCG_2010_clean) %>% 
+  bind_rows(NSCG_2013_clean) %>% 
+  bind_rows(NSCG_2015_clean) %>% 
+  bind_rows(NSCG_2017_clean) %>% 
+  bind_rows(NSCG_2019_clean)  
+  
+write_csv(NSCG_Master_Raw, here("NSCG_Data/NSCG_Master_Raw.csv"))
 
 NSCG_Master <- NSCG_Master_Raw
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Drop Tibbles I don't need -----------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+rm(NSCG_2003_clean,NSCG_2010_clean,NSCG_2013_clean,NSCG_2015_clean,NSCG_2017_clean)
+rm(NSCG_2003_raw,NSCG_2010_raw,NSCG_2013_raw,NSCG_2015_raw,NSCG_2017_raw)
+rm(NSCG_2003_match,NSCG_2010_match,NSCG_2013_match,NSCG_2015_match,NSCG_2017_match)
 
-################################################################################################################################################
-##GENERATING VARIABLES
-################################################################################################################################################
-#############################################################
-##Renaming a Couple Vars
-############################################################
-NSCG_Master <- NSCG_Master %>% dplyr::rename( "Survey_Year"=REFYR, "Survey_Weight"=WTSURVY)
 
-################################################################################################################
-##Generating job satisfaction variables
-################################################################################################################
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# generate Variables-----------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Rename weight and year vars ---------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NSCG_Master <- NSCG_Master %>% 
+  dplyr::rename( "Survey_Year"=REFYR, "Survey_Weight"=WTSURVY)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Generate satisfaction variable ------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ##Detailed
 NSCG_Master <- NSCG_Master %>% mutate(Job_Satis = ifelse(JOBSATIS=="4", 1, 
@@ -417,3 +533,4 @@ NSCG_Master <- left_join(NSCG_Master,rec_yearly,by="Grad_Year_BA")
 ##SAVING DATASET
 ############################################################
 saveRDS(NSCG_Master, file = here("NSCG_Data/NSCG_Master.rds"))
+

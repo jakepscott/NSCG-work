@@ -1,163 +1,10 @@
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Load Libs ---------------------------------------------------------------
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 library(tidyverse)
 library(here)
 library(vroom)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Load Data ---------------------------------------------------------------
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NSCG_2003_raw <- vroom(here("NSCG_Data/NSCG_2003_raw.csv"),
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, 
-                                      GENDER, AGE, CTZUSIN, CHLVIN, MARSTA, 
-                                      SPOWK, RESPLOC, HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, NDGRMED, 
-                                      SALARY, HRSWK, 
-                                      SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, 
-                                      FACSAL, FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                      NBANED, NOCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=NOCPR, 
-         "Major"=NDGRMED)
-
-NSCG_2010_raw <- vroom(here("NSCG_Data/NSCG_2010_raw.csv"), 
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER,
-                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
-                                      HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
-                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=N2OCPR, 
-         "Major"=NDGRMED)
-
-NSCG_2013_raw <- vroom(here("NSCG_Data/NSCG_2013_raw.csv"), 
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
-                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
-                                      HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
-                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=N2OCPR, 
-         "Major"=NDGRMED)
-
-NSCG_2015_raw <- vroom(here("NSCG_Data/NSCG_2015_raw.csv"), 
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
-                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
-                                      HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
-                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=N2OCPR, 
-         "Major"=NDGRMED)
-
-NSCG_2017_raw <- vroom(here("NSCG_Data/NSCG_2017_raw.csv"), 
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
-                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
-                                      HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, NDGRMED, JOBINS, JOBPENS, 
-                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, NBAMED,
-                                      NBANED, N2OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=N2OCPR, 
-         "Major"=NDGRMED)
-
-NSCG_2019_raw <- vroom(here("NSCG_Data/NSCG_2019_raw.csv"), 
-                       col_select = c(orig_dataset_id,JOBSATIS, BAACYR, OCEDRLP, RACETHM, GENDER, 
-                                      AGE, CTZUSIN, CHLVIN, MARSTA, SPOWK, RESPLOC, 
-                                      HCAPIN, DGRDG, HDCARN, 
-                                      HDPBPR, N2DGRMED, JOBINS, JOBPENS, 
-                                      JOBPROFT, JOBVAC, SALARY, HRSWK, SUPWK, STRTYR, WAPRI, FACADV,
-                                      FACBEN, FACCHAL, FACIND, FACLOC, FACRESP, FACSAL, 
-                                      FACSEC, FACSOC, EMSIZE, NEDTP, NRREA, N2BAMED,
-                                      N2BANED, N3OCPR, WTSURVY, HISPCAT, BAYR, REFYR,
-                                      COMCOLI,EDDAD, EDMOM, HSYR, SATADV,
-                                      SATBEN, SATCHAL, SATIND,SATLOC, SATRESP, SATSAL,
-                                      SATSEC, SATSOC, EMSMI)) %>%
-  rename("Job"=N3OCPR, 
-         "Major"=N2DGRMED)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Join in Match Data ------------------------------------------------------
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Load Data
-NSCG_2003_match <- vroom(here("NSCG_Data/Match_2003.csv"))
-NSCG_2010_match <- vroom(here("NSCG_Data/Match_2010.csv"))
-NSCG_2013_match <- vroom(here("NSCG_Data/Match_2013.csv"))
-NSCG_2015_match <- vroom(here("NSCG_Data/Match_2015.csv"))
-NSCG_2017_match <- vroom(here("NSCG_Data/Match_2017.csv"))
-NSCG_2019_match <- vroom(here("NSCG_Data/Match_2019.csv"))
-
-
-# Join data ( changesalso make a couple of)
-NSCG_2003_clean <- NSCG_2003_raw %>% 
-  left_join(NSCG_2003_match) %>% 
-  mutate_all(as.character)
-
-NSCG_2010_clean <- NSCG_2010_raw %>% 
-  left_join(NSCG_2010_match) %>% 
-  mutate_all(as.character)
-
-NSCG_2013_clean <- NSCG_2013_raw %>% 
-  left_join(NSCG_2013_match) %>% 
-  mutate_all(as.character)
-
-NSCG_2015_clean <- NSCG_2015_raw %>% 
-  left_join(NSCG_2015_match) %>% 
-  mutate_all(as.character)
-
-NSCG_2017_clean <- NSCG_2017_raw %>% 
-  left_join(NSCG_2017_match) %>% 
-  mutate_all(as.character)
-
-NSCG_2019_clean <- NSCG_2019_raw %>% 
-  left_join(NSCG_2019_match) %>% 
-  mutate_all(as.character)
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Bind NSCG Data ------------------------------------------------------
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NSCG_Master_Raw <- NSCG_2003_clean %>%
-  bind_rows(NSCG_2010_clean) %>% 
-  bind_rows(NSCG_2013_clean) %>% 
-  bind_rows(NSCG_2015_clean) %>% 
-  bind_rows(NSCG_2017_clean) %>% 
-  bind_rows(NSCG_2019_clean)  
-  
-write_csv(NSCG_Master_Raw, here("NSCG_Data/NSCG_Master_Raw.csv"))
-
-NSCG_Master <- NSCG_Master_Raw
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Drop Tibbles I don't need -----------------------------------------------
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-rm(NSCG_2003_clean,NSCG_2010_clean,NSCG_2013_clean,NSCG_2015_clean,NSCG_2017_clean)
-rm(NSCG_2003_raw,NSCG_2010_raw,NSCG_2013_raw,NSCG_2015_raw,NSCG_2017_raw)
-rm(NSCG_2003_match,NSCG_2010_match,NSCG_2013_match,NSCG_2015_match,NSCG_2017_match)
-
+NSCG_raw <- vroom(here("NSCG_Data/NSCG_Master_Raw.csv"))
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # generate Variables-----------------------------------------------
@@ -166,23 +13,28 @@ rm(NSCG_2003_match,NSCG_2010_match,NSCG_2013_match,NSCG_2015_match,NSCG_2017_mat
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Rename weight and year vars ---------------------------------------------
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NSCG_Master <- NSCG_Master %>% 
+NSCG_Master <- NSCG_raw %>% 
   dplyr::rename( "Survey_Year"=REFYR, "Survey_Weight"=WTSURVY)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Generate satisfaction variable ------------------------------------------
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Detailed satisfaction
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Job_Satis = case_when(JOBSATIS=="4" ~ 1,
+                               JOBSATIS=="3" ~ 2,
+                               JOBSATIS=="2" ~ 3,
+                               JOBSATIS=="1" ~ 4,
+                               TRUE ~ NA_real_))
 
-##Detailed
-NSCG_Master <- NSCG_Master %>% mutate(Job_Satis = ifelse(JOBSATIS=="4", 1, 
-                                                         ifelse(JOBSATIS=="3", 2, 
-                                                                ifelse(JOBSATIS=="2", 3,
-                                                                       ifelse(JOBSATIS=="1", 4, NA)))))
 
 NSCG_Master$Job_Satis <- factor(NSCG_Master$Job_Satis,
-                                labels = c("Very Dissatisfied", "Somewhat Dissatisfied", "Somewhat Satisfied", "Very Satisfied"))
+                                labels = c("Very Dissatisfied", "Somewhat Dissatisfied", 
+                                           "Somewhat Satisfied", "Very Satisfied"))
 ##Binary
-NSCG_Master <- NSCG_Master %>% mutate(Bi_Job_Satis = ifelse(JOBSATIS==4 | JOBSATIS==3, 0, 1))
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Bi_Job_Satis = ifelse(JOBSATIS=="4" | JOBSATIS=="3", 
+                               yes = 0, no = 1))
 
 ##Satisfaction with specific facets of the job
 NSCG_Master <- NSCG_Master %>% mutate(SATADV = ifelse(SATADV=="4"|SATADV=="3", "0", "1"),
@@ -195,43 +47,44 @@ NSCG_Master <- NSCG_Master %>% mutate(SATADV = ifelse(SATADV=="4"|SATADV=="3", "
                                       SATSEC = ifelse(SATSEC=="4"|SATSEC=="3", "0", "1"),
                                       SATSOC = ifelse(SATSOC=="4"|SATSOC=="3", "0", "1"))
 
-################################################################################################################
-##Generating subjective mismatch variable
-################################################################################################################
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Generate subjective mismatch ------------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 NSCG_Master <- NSCG_Master %>% dplyr::rename("Sub_Mismatch" = OCEDRLP)
-NSCG_Master <- NSCG_Master %>% mutate(Sub_Mismatch = ifelse(Sub_Mismatch=="1", 1, 
-                                                            ifelse(Sub_Mismatch=="2", 2, 
-                                                                   ifelse(Sub_Mismatch=="3", 3, NA))))
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Sub_Mismatch = case_when(Sub_Mismatch != "L" ~ as.numeric(Sub_Mismatch),
+                                  TRUE ~ NA_real_))
 
 NSCG_Master$Sub_Mismatch <- factor(NSCG_Master$Sub_Mismatch,
                                    labels = c("Closely Related", "Somewhat Related", "Not Related"))
 
-NSCG_Master <- NSCG_Master %>% mutate(Bi_Mismatch = ifelse(Sub_Mismatch=="Not Related",1,0))
+NSCG_Master <- NSCG_Master %>%
+  mutate(Bi_Mismatch = ifelse(Sub_Mismatch=="Not Related",1,0))
 
 NSCG_Master$Bi_Mismatch <- factor(NSCG_Master$Bi_Mismatch)
 
-################################################################################################################
-##Combined mismatch variable
-################################################################################################################
-NSCG_Master <- NSCG_Master %>% mutate(Full_Mismatch=ifelse(Sub_Mismatch=="Closely Related" & Obj_Mismatch==0, 0,
-                                                           ifelse(Sub_Mismatch=="Closely Related" & Obj_Mismatch==1, 3,
-                                                                  ifelse(Sub_Mismatch=="Somewhat Related" & Obj_Mismatch==0, 4, 
-                                                                         ifelse(Sub_Mismatch=="Somewhat Related" & Obj_Mismatch==1, 5,
-                                                                                ifelse(Sub_Mismatch=="Not Related" & Obj_Mismatch==0, 2,
-                                                                                       ifelse(Sub_Mismatch=="Not Related" & Obj_Mismatch==1, 1, NA)))))))
-NSCG_Master$Full_Mismatch <- factor(NSCG_Master$Full_Mismatch,
-                                    labels = c("True Match", "True Mismatch", "Reported Mismatch", "Reported Match", "Somewhat Matched", "Somewhat Mismatched"))
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Create combined mismatch variable ---------------------------------------
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NSCG_Master
 
-
+#
+#RECALL: Need to rename "match" into Objective match
 NSCG_Master <- NSCG_Master %>% 
-  mutate(four_mismatch=ifelse(Sub_Mismatch=="Closely Related" & Obj_Mismatch==0 | Sub_Mismatch=="Somewhat Related" & Obj_Mismatch==0, 0,
-                              ifelse(Sub_Mismatch=="Closely Related" & Obj_Mismatch==1 | Sub_Mismatch=="Somewhat Related" & Obj_Mismatch==1, 1,
-                                     ifelse(Sub_Mismatch=="Not Related" & Obj_Mismatch==0, 2,
-                                            ifelse(Sub_Mismatch=="Not Related" & Obj_Mismatch==1, 3, NA)))))
-
-NSCG_Master$four_mismatch <- factor(NSCG_Master$four_mismatch,
-                                    levels = c(0,1,2,3),
-                                    labels = c("True Match", "Reported Match", "Reported Mismatch", "True Mismatch"))
+  mutate(Full_Mismatch = case_when(Sub_Mismatch=="Closely Related" & obj_match=="Match" ~ "True Match",
+                                   Sub_Mismatch=="Closely Related" & obj_match=="Mismatch" ~ "Reported Match",
+                                   Sub_Mismatch=="Somewhat Related" & obj_match=="Match" ~ "Somewhat Matched",
+                                   Sub_Mismatch=="Somewhat Related" & obj_match=="Mismatch" ~ "Somewhat Mismatched",
+                                   Sub_Mismatch=="Not Related" & obj_match=="Match" ~ "Reported Mismatch",
+                                   Sub_Mismatch=="Not Related" & obj_match=="Mismatch"~ "True Mismatch",
+                                   TRUE ~ NA_character_),
+         four_mismatch = case_when(Sub_Mismatch=="Closely Related" & obj_match=="Match" | 
+                                     Sub_Mismatch=="Somewhat Related" & obj_match=="Match" ~ "True Match",
+                                   Sub_Mismatch=="Closely Related" & obj_match=="Mismatch" | 
+                                     Sub_Mismatch=="Somewhat Related" & obj_match=="Mismatch" ~ "Reported Match",
+                                   Sub_Mismatch=="Not Related" & obj_match=="Match" ~ "Reported Mismatch",
+                                   Sub_Mismatch=="Not Related" & obj_match=="Mismatch" ~ "True Mismatch",
+                                   TRUE ~ NA_character_))
 
 
 ################################################################################################################

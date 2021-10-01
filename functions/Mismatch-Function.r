@@ -55,7 +55,7 @@ mismatch_function <- function(data,
     #mutate(Job = as.numeric(Job)) %>% 
     left_join(nested) %>% 
     rowwise() %>% 
-    mutate(match = ifelse({{counting_variable}} %in% (top %>% pull({{counting_variable}})), "Match", "Mismatch")) %>% 
+    mutate(obj_match = ifelse({{counting_variable}} %in% (top %>% pull({{counting_variable}})), "Match", "Mismatch")) %>% 
     ungroup()
   
   if(!keep_nests){

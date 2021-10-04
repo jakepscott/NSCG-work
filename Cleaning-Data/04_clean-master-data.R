@@ -87,35 +87,33 @@ NSCG_Master <- NSCG_Master %>%
                                    TRUE ~ NA_character_))
 
 
-################################################################################################################
-##Fixing Principal Job Variable
-################################################################################################################
-##Have NOCPR from 2010, N2OCPR from 2013-2017. Need to combine these into 1 somehow
-NSCG_Master %>% filter(!is.na(NOCPR) & !is.na(N2OCPR)) #Shows if one of them is missing the other is available
-NSCG_Master <- NSCG_Master %>% mutate(Principal_Job=ifelse(!is.na(NOCPR), NOCPR, N2OCPR))
 
 ################################################################################################################
 ##Generating demographic variables
 ################################################################################################################
 #Race
-NSCG_Master <- NSCG_Master %>% mutate(Race=RACETHM)
-NSCG_Master <- NSCG_Master %>% mutate(Race=ifelse(RACETHM=="5", 0,
-                                                  ifelse(RACETHM=="1",1,
-                                                         ifelse(RACETHM=="3",2,
-                                                                ifelse(HISPCAT=="1",3,
-                                                                       ifelse(HISPCAT=="2" | HISPCAT=="3" | HISPCAT=="4", 4,
-                                                                              ifelse(RACETHM=="2",5,
-                                                                                     ifelse(RACETHM=='6',6, 7))))))))
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Race=RACETHM)
 
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Race=case_when(RACETHM=="5" ~ "White",
+                        RACETHM=="1" ~ "Asian (and Asian/White)",
+                        RACETHM=="3" ~ "Black, non-Hispanic",
+                        HISPCAT=="1" ~ "Hispanic, Mexican",
+                        HISPCAT=="2" | HISPCAT=="3" | HISPCAT=="4" ~  "Hispanic, non-Mexican",
+                        RACETHM=="2" ~ "American Indian/Alaskan Native",
+                        RACETHM=="6" ~ "Non-Hispanic Native Hawaiian/Pacific Islander", 
+                        RACETHM=="7" ~ "Multiple Race",
+                        TRUE ~ NA_character_))
 
-NSCG_Master$Race <- factor(NSCG_Master$Race,
-                           labels = c("White", "Asian (and Asian/White)", "Black, non-Hispanic", "Hispanic, Mexican", "Hispanic, non-Mexican",
-                                      "American Indian/Alaskan Native", "Non-Hispanic Native Hawaiian/Pacific Islander", "Multiple Race"))
 #Race binary
-NSCG_Master <- NSCG_Master %>% dplyr::mutate(Non_White=ifelse(Race!="White",1,0))
+NSCG_Master <- NSCG_Master %>% 
+  mutate(Non_White=ifelse(Race!="White",1,0))
 
 #Gender
-NSCG_Master <- NSCG_Master %>% dplyr::rename(Gender=GENDER)
+NSCG_Master <- NSCG_Master %>% 
+  dplyr::rename(Gender=GENDER)
+
 NSCG_Master$Gender <- factor(NSCG_Master$Gender)
 
 #Age
